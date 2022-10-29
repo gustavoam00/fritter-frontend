@@ -9,6 +9,10 @@ import dotenv from 'dotenv';
 import * as userValidator from '../server/user/middleware';
 import {userRouter} from '../server/user/router';
 import {freetRouter} from '../server/freet/router';
+import {voteRouter} from '../server/vote/router';
+import {reactionRouter} from '../server/reaction/router';
+import {groupRouter} from '../server/group/router';
+import {anonRouter} from '../server/anon/router';
 import MongoStore from 'connect-mongo';
 
 // Load environmental variables
@@ -70,6 +74,10 @@ app.use(userValidator.isCurrentSessionUserExists);
 // Add routers from routes folder
 app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
+app.use('/api/votes', voteRouter);
+app.use('/api/reactions', reactionRouter);
+app.use('/api/groups', groupRouter);
+app.use('/api/anon', anonRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {
