@@ -8,11 +8,12 @@ export default {
   mixins: [BlockForm],
   data() {
     return {
-      url: '/api/freets',
+      url: '/api/freets', // '/api/freets/:groupName?'
       method: 'POST',
       hasBody: true,
       fields: [
-        {id: 'content', label: 'Content', value: ''}
+        {id: 'content', label: 'Content', value: ''},
+        {id: 'groupName', label: 'Group (optional)', value: ''}
       ],
       title: 'Create a freet',
       refreshFreets: true,

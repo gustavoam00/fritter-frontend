@@ -11,9 +11,7 @@ const isVoteExists = async (req: Request, res: Response, next: NextFunction) => 
   const vote = validFormat ? await VoteCollection.findOne(req.params.voteId) : '';
   if (!vote) {
     res.status(404).json({
-      error: {
-        voteNotFound: `Vote with vote ID ${req.params.voteId} does not exist.`
-      }
+      error: `Vote with vote ID ${req.params.voteId} does not exist.`
     });
     return;
   }

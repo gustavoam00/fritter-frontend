@@ -11,20 +11,11 @@
       </h1>
     </div>
     <div class="right">
-      <router-link to="/">
+      <router-link to="/home">
         Home
       </router-link>
-      <router-link
-        v-if="$store.state.username"
-        to="/account"
-      >
-        Account
-      </router-link>
-      <router-link
-        v-else
-        to="/login"
-      >
-        Login
+      <router-link to="/settings">
+        Settings
       </router-link>
     </div>
     <section class="alerts">

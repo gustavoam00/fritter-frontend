@@ -11,9 +11,7 @@ const isReactionExists = async (req: Request, res: Response, next: NextFunction)
   const reaction = validFormat ? await ReactionCollection.findOne(req.params.reactionId) : '';
   if (!reaction) {
     res.status(404).json({
-      error: {
-        ReactionNotFound: `Reaction with reaction ID ${req.params.reactionId} does not exist.`
-      }
+      error: `Reaction with reaction ID ${req.params.reactionId} does not exist.`
     });
     return;
   }

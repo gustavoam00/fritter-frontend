@@ -7,13 +7,11 @@ import UserCollection from '../user/collection';
  * Checks that the group with 'groupId' exists
  */
 const isGroupExists = async (req: Request, res: Response, next: NextFunction) => {
-    const validFormat = Types.ObjectId.isValid(req.params.groupId);
-    const group = validFormat ? await GroupCollection.findGroup(req.params.groupId) : '';
+    const validFormat = Types.ObjectId.isValid(req.body.groupId);
+    const group = validFormat ? await GroupCollection.findGroup(req.body.groupId) : '';
     if (!group) {
       res.status(404).json({
-        error: {
-          freetNotFound: `Group with group ID ${req.params.groupId} does not exist.`
-        }
+        error: `Group with group ID ${req.body.groupId} does not exist.`
       });
       return;
     }
@@ -25,12 +23,10 @@ const isGroupExists = async (req: Request, res: Response, next: NextFunction) =>
  * Checks that the group with 'groupName' owned by 'owner' exists
  */
 const isGroupExistsName = async (req: Request, res: Response, next: NextFunction) => {
-  const group =  await GroupCollection.findGroupByName(req.session.userId, req.params.groupName);
+  const group =  await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
   if (!group) {
     res.status(404).json({
-      error: {
-        freetNotFound: `Group with group name ${req.params.groupName} does not exist.`
-      }
+      error: `Group with group name ${req.body.groupName} does not exist.`
     });
     return;
   }
@@ -42,7 +38,7 @@ const isGroupExistsName = async (req: Request, res: Response, next: NextFunction
  * Checks that the user is the owner of group with 'groupId'
  */
 const isValidGroupModifier = async (req: Request, res: Response, next: NextFunction) => {
-    const group = await GroupCollection.findGroup(req.params.groupId);
+    const group = await GroupCollection.findGroup(req.body.groupId);
     const userId = group.owner._id;
     if (req.session.userId !== userId.toString()) {
       res.status(403).json({
@@ -58,12 +54,10 @@ const isValidGroupModifier = async (req: Request, res: Response, next: NextFunct
  * Checks that the user doesn't already have a group with 'name'
  */
 const isGroupNameNotInUse = async (req: Request, res: Response, next: NextFunction) => {
-    const group = await GroupCollection.findGroupByName(req.session.userId, req.body.name);
+    const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
     if (group) {
       res.status(409).json({
-      error: {
-        username: 'A group with this name already exists.'
-      }
+      error: 'A group with this name already exists.'
     });
       return;
     }
@@ -74,10 +68,10 @@ const isGroupNameNotInUse = async (req: Request, res: Response, next: NextFuncti
  * Checks that 'userId' not already a member of group wiht 'groupName'
  */
 const isMemberNotInGroup = async (req: Request, res: Response, next: NextFunction) => {
-  const group = await GroupCollection.findGroupByName(req.session.userId, req.params.groupName);
-  if (!group.members.includes(req.params.memberId)){
+  const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
+  if (!group.members.includes(req.body.memberId)){
     res.status(404).json({
-      error: `User with id ${req.params.memberId as string} not in group.`
+      error: `User with id ${req.body.memberId as string} not in group.`
     });
     return;
   }
@@ -91,24 +85,24 @@ const isMemberNotInGroup = async (req: Request, res: Response, next: NextFunctio
  * and they cannot be already be a member of the group
  */
 const isValidMember = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await UserCollection.findOneByUserId(req.params.memberId);
+  const user = await UserCollection.findOneByUserId(req.body.memberId);
   if (!user) {
     res.status(404).json({
-      error: `User with id ${req.params.memberId as string} does not exist.`
+      error: `User with id ${req.body.memberId as string} does not exist.`
     });
     return;
   }
-  const group = await GroupCollection.findGroupByName(req.session.userId, req.params.groupName);
-  if (group.owner.equals(req.params.memberId)){
+  const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
+  if (group.owner.equals(req.body.memberId)){
 
     res.status(403).json({
       error: `Owner cannot be added to own group`
     });
     return;
   }
-  if (group.members.includes(req.params.memberId)){
+  if (group.members.includes(req.body.memberId)){
     res.status(403).json({
-      error: `User with id ${req.params.memberId as string} already in group.`
+      error: `User with id ${req.body.memberId as string} already in group.`
     });
     return;
   }
