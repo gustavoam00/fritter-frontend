@@ -1,6 +1,8 @@
 import type {HydratedDocument, Types} from 'mongoose';
 import type {Group} from './model';
 import GroupModel from './model';
+import FreetModel from '../freet/model';
+import FreetCollection from '../freet/collection';
 import type {User} from '../user/model';
 
 class GroupCollection {
@@ -61,6 +63,7 @@ class GroupCollection {
      */
     static async deleteGroup(groupId: Types.ObjectId | string): Promise<boolean> {
         const group = await GroupModel.deleteOne({_id: groupId});
+        await FreetCollection.deleteManyGroup(groupId);
         return group !== null;
     }
     
@@ -68,12 +71,12 @@ class GroupCollection {
      * Add user 'member' to the group as a member
      * 
      * @param {Types.ObjectId | string} groupId - _id of group that is being updated
-     * @param {Types.ObjectId | string} member - the user id of the new member
+     * @param {string} member - the username of the new member
      * @returns {HydratedDocument<Group>} - the updated group
      */
-    static async addMember(groupId: Types.ObjectId | string, member: Types.ObjectId | string): Promise<HydratedDocument<Group>>{
+    static async addMember(groupId: Types.ObjectId | string, member: string): Promise<HydratedDocument<Group>>{
         const group = await GroupModel.findOne({_id: groupId});
-        group.members.push(member as String);
+        group.members.push(member);
         await group.save();
         return group;
     }
@@ -82,12 +85,12 @@ class GroupCollection {
      * Removes user 'member' from the group
      * 
      * @param {Types.ObjectId | string} groupId - _id of group that is being updated
-     * @param {Types.ObjectId | string} member - the user id of the member
+     * @param {string} member - the username of the member
      * @returns {HydratedDocument<Group>} - the updated group
      */
-    static async removeMember(groupId: Types.ObjectId | string, member: Types.ObjectId | string): Promise<HydratedDocument<Group>>{
+    static async removeMember(groupId: Types.ObjectId | string, member: string): Promise<HydratedDocument<Group>>{
         const group = await GroupModel.findOne({_id: groupId});
-        const index = group.members.indexOf(member as String, 0);
+        const index = group.members.indexOf(member, 0);
         if (index > -1) {
             group.members.splice(index, 1);
         }

@@ -17,6 +17,8 @@
       <CreateGroupForm />
       <DeleteGroupForm />
       <ChangeGroupForm />
+      <AddMemberForm />
+      <DeleteMemberForm />
     </section>
     <section>
       <header>
@@ -31,9 +33,13 @@
 <script>
 import ChangeUsernameForm from '@/components/Settings/ChangeUsernameForm.vue';
 import ChangePasswordForm from '@/components/Settings/ChangePasswordForm.vue';
+
 import CreateGroupForm from '@/components/Settings/CreateGroupForm.vue';
 import DeleteGroupForm from '@/components/Settings/DeleteGroupForm.vue';
 import ChangeGroupForm from '@/components/Settings/ChangeGroupForm.vue';
+import AddMemberForm from '@/components/Settings/AddMemberForm.vue';
+import DeleteMemberForm from '@/components/Settings/DeleteMemberForm.vue';
+
 import DeleteAccountForm from '@/components/Settings/DeleteAccountForm.vue';
 import LogoutForm from '@/components/Settings/LogoutForm.vue';
 
@@ -45,6 +51,8 @@ export default {
     CreateGroupForm,
     DeleteGroupForm,
     ChangeGroupForm,
+    AddMemberForm,
+    DeleteMemberForm,
     DeleteAccountForm,
     LogoutForm
   }

@@ -47,9 +47,10 @@ class FreetCollection {
     // Retrieves freets and sorts them from most to least recent
     let freets: Array<HydratedDocument<Freet>> = await FreetModel.find({group:undefined}).populate('authorId');
     const other_freets: Array<HydratedDocument<Freet>> = await FreetModel.find({group :{$ne: undefined }}).populate('authorId');
+    const name = (await UserCollection.findOneByUserId(userId)).username;
     for (const f of other_freets){
       const group = await GroupCollection.findGroup(f.group);
-      if (group.owner.equals(userId) || group.members.includes(userId as string)){
+      if (group.owner.equals(userId) || group.members.includes(name)){
         freets.push(f);
       }
     }
@@ -67,9 +68,10 @@ class FreetCollection {
     const author = await UserCollection.findOneByUsername(username);
     let freets: Array<HydratedDocument<Freet>> = await FreetModel.find({group:undefined, authorId: author._id}).populate('authorId');
     const other_freets: Array<HydratedDocument<Freet>> = await FreetModel.find({group :{$ne: undefined }, authorId: author._id}).populate('authorId');
+    const name = (await UserCollection.findOneByUserId(userId)).username;
     for (const f of other_freets){
       const group = await GroupCollection.findGroup(f.group);
-      if (group.owner.equals(userId) || group.members.includes(userId as string)){
+      if (group.owner.equals(userId) || group.members.includes(name)){
         freets.push(f);
       }
     }
@@ -109,6 +111,15 @@ class FreetCollection {
    */
   static async deleteMany(authorId: Types.ObjectId | string): Promise<void> {
     await FreetModel.deleteMany({authorId});
+  }
+
+  /**
+   * Delete all the freets on given group
+   *
+   * @param {string} groupId - The id of author of freets
+   */
+   static async deleteManyGroup(groupId: Types.ObjectId | string): Promise<void> {
+    await FreetModel.deleteMany({groupId});
   }
 }
 

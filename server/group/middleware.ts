@@ -69,9 +69,10 @@ const isGroupNameNotInUse = async (req: Request, res: Response, next: NextFuncti
  */
 const isMemberNotInGroup = async (req: Request, res: Response, next: NextFunction) => {
   const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
-  if (!group.members.includes(req.body.memberId)){
+  console.log(group.members)
+  if (!group.members.includes(req.body.username)){
     res.status(404).json({
-      error: `User with id ${req.body.memberId as string} not in group.`
+      error: `User ${req.body.username} not in group.`
     });
     return;
   }
@@ -79,30 +80,29 @@ const isMemberNotInGroup = async (req: Request, res: Response, next: NextFunctio
 };
 
 /**
- * Checks that 'memberId' is a valid member to be added to group,
+ * Checks that 'username' is a valid member to be added to group,
  * they need to exist
  * they cannot be the owner themselves,
  * and they cannot be already be a member of the group
  */
 const isValidMember = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await UserCollection.findOneByUserId(req.body.memberId);
+  const user = await UserCollection.findOneByUsername(req.body.username);
   if (!user) {
     res.status(404).json({
-      error: `User with id ${req.body.memberId as string} does not exist.`
+      error: `User ${req.body.username} does not exist.`
     });
     return;
   }
   const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
-  if (group.owner.equals(req.body.memberId)){
-
+  if (group.owner.equals(user._id)){
     res.status(403).json({
       error: `Owner cannot be added to own group`
     });
     return;
   }
-  if (group.members.includes(req.body.memberId)){
+  if (group.members.includes(req.body.username)){
     res.status(403).json({
-      error: `User with id ${req.body.memberId as string} already in group.`
+      error: `User ${req.body.username} already in group.`
     });
     return;
   }

@@ -66,13 +66,13 @@ router.get(
  * @throws {404} - If group name is not valid for user as owner
  */
  router.post(
-  '/:groupName?',
+  '/',
   [
     userValidator.isUserLoggedIn,
     freetValidator.isValidFreetContent
   ],
   async (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.groupName !== undefined) {
+    if (req.body.groupName !== '') {
       next();
       return;
     }
@@ -89,10 +89,10 @@ router.get(
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const group = await GroupCollection.findGroupByName(req.session.userId, req.params.groupName);
+    const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
     const freet = await FreetCollection.addOne(userId, req.body.content, group._id);
     res.status(201).json({
-      message: `Your freet was posted successfully to ${req.params.groupName}.`,
+      message: `Your freet was posted successfully to ${req.body.groupName}.`,
       freet: util.constructFreetResponse(freet)
     });
   }

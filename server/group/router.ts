@@ -1,6 +1,7 @@
 import type {Request, Response} from 'express';
 import express from 'express';
 import GroupCollection from './collection';
+import UserCollection from '../user/collection';
 import * as groupValidator from './middleware';
 import * as userValidator from '../user/middleware';
 
@@ -78,7 +79,7 @@ router.post(
     ],
     async (req: Request, res: Response) => {
       let group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
-      await GroupCollection.addMember(group._id, req.body.memberId)
+      await GroupCollection.addMember(group._id, req.body.username);
       group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
       res.status(201).json({
         message: 'Group member succesfully added',
@@ -106,7 +107,7 @@ router.post(
     ],
     async (req: Request, res: Response) => {
       let group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
-      await GroupCollection.removeMember(group._id, req.body.memberId)
+      await GroupCollection.removeMember(group._id, req.body.username)
       group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
       res.status(200).json({
         message: 'Group member succesfully removed',
