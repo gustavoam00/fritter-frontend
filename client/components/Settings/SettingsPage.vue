@@ -22,6 +22,17 @@
     </section>
     <section>
       <header>
+        <h2>Anonymous</h2>
+      </header>
+      <article v-if="$store.state.anon">
+        <SwitchFromAnonForm />
+      </article>
+      <article v-else>
+        <SwitchToAnonForm />
+      </article>
+    </section>
+    <section>
+      <header>
         <h2>Account management</h2>
       </header>
       <LogoutForm />
@@ -40,6 +51,9 @@ import ChangeGroupForm from '@/components/Settings/ChangeGroupForm.vue';
 import AddMemberForm from '@/components/Settings/AddMemberForm.vue';
 import DeleteMemberForm from '@/components/Settings/DeleteMemberForm.vue';
 
+import SwitchToAnonForm from '@/components/Settings/SwitchToAnonForm.vue';
+import SwitchFromAnonForm from '@/components/Settings/SwitchFromAnonForm.vue';
+
 import DeleteAccountForm from '@/components/Settings/DeleteAccountForm.vue';
 import LogoutForm from '@/components/Settings/LogoutForm.vue';
 
@@ -53,6 +67,8 @@ export default {
     ChangeGroupForm,
     AddMemberForm,
     DeleteMemberForm,
+    SwitchToAnonForm,
+    SwitchFromAnonForm,
     DeleteAccountForm,
     LogoutForm
   }

@@ -1,6 +1,7 @@
 import type {Request, Response} from 'express';
 import express from 'express';
 import AnonCollection from './collection';
+import UserCollection from '../user/collection';
 import * as userValidator from '../user/middleware';
 import * as anonValidator from './middleware';
 
@@ -25,10 +26,11 @@ const router = express.Router();
     ],
     async (req: Request, res: Response) => {
       const anon = await AnonCollection.findAnon(req.session.userId, false);
-      console.log(anon);
       req.session.userId = anon.anonAccount.toString();
+      const user = await UserCollection.findOneByUserId(req.session.userId);
       res.status(201).json({
         message: 'You have switched into Anonymous mode',
+        user: user
       });
     }
 );
@@ -52,8 +54,10 @@ const router = express.Router();
     async (req: Request, res: Response) => {
         const anon = await AnonCollection.findAnon(req.session.userId, true);
         req.session.userId = anon.realAccount.toString();
+        const user = await UserCollection.findOneByUserId(req.session.userId);
         res.status(200).json({
             message: 'You have switched out from Anonymous Mode',
+            user: user
         });
     }
 );
