@@ -9,9 +9,35 @@
       <h3 class="author">
         @{{ freet.author }}
       </h3>
+      <p class="info">
+        {{ freet.dateModified }}
+        <i v-if="freet.edited">(edited)</i>
+      </p>
+    </header>
+    <textarea
+      v-if="editing"
+      class="content"
+      :value="draft"
+      @input="draft = $event.target.value"
+    />
+    <p
+      v-else
+      class="content"
+    >
+      {{ freet.content }}
+    </p>
+    <div class = actions>
+      <button @click="upvote">
+        Like
+      </button>
+      <button @click = "downvote">
+        Dislike
+      </button>
+      <button @click = "react">
+        React
+      </button>
       <div
-        v-if="$store.state.username === freet.author"
-        class="actions"
+          v-if="$store.state.username === freet.author"
       >
         <button
           v-if="editing"
@@ -35,23 +61,7 @@
           🗑️ Delete
         </button>
       </div>
-    </header>
-    <textarea
-      v-if="editing"
-      class="content"
-      :value="draft"
-      @input="draft = $event.target.value"
-    />
-    <p
-      v-else
-      class="content"
-    >
-      {{ freet.content }}
-    </p>
-    <p class="info">
-      Posted at {{ freet.dateModified }}
-      <i v-if="freet.edited">(edited)</i>
-    </p>
+    </div>
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -132,6 +142,36 @@ export default {
       };
       this.request(params);
     },
+    upvote() {
+      //
+      const params = {
+        method: 'POST',
+        up: true,
+        message: 'Successfully liked freet!',
+        body: JSON.stringify({up: true}),
+        callback: () => {
+          this.$set(this.alerts, params.message, 'success');
+          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+        }
+      };
+      this.requestVote(params);
+    },
+    downvote() {
+      const params = {
+        method: 'POST',
+        up: true,
+        message: 'Successfully disliked freet!',
+        body: JSON.stringify({up: false}),
+        callback: () => {
+          this.$set(this.alerts, params.message, 'success');
+          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+        }
+      };
+      this.requestVote(params);
+    },
+    react() {
+
+    },
     async request(params) {
       /**
        * Submits a request to the freet's endpoint
@@ -161,6 +201,34 @@ export default {
         this.$set(this.alerts, e, 'error');
         setTimeout(() => this.$delete(this.alerts, e), 3000);
       }
+    },
+    async requestVote(params) {
+      /**
+       * Submits a request to the votes's endpoint
+       * @param params - Options for the request
+       * @param params.callback - Function to run if the the request succeeds
+       */
+      const options = {
+        method: params.method, headers: {'Content-Type': 'application/json'}
+      };
+      if (params.body) {
+        options.body = params.body;
+      }
+
+      try {
+        const r = await fetch(`/api/votes/${this.freet._id}`, options);
+        if (!r.ok) {
+          const res = await r.json();
+          throw new Error(res.error);
+        }
+
+        this.$store.commit('refreshFreets');
+
+        params.callback();
+      } catch (e) {
+        this.$set(this.alerts, e, 'error');
+        setTimeout(() => this.$delete(this.alerts, e), 3000);
+      }
     }
   }
 };
@@ -169,7 +237,21 @@ export default {
 <style scoped>
 .freet {
     border: 1px solid #111;
-    padding: 20px;
+    padding: 2.5%;
     position: relative;
+}
+header {
+  display: flex;
+  flex-direction:row;
+}
+.actions {
+  display: flex;
+}
+
+.info {
+  font-size: 0.75em;
+  position: absolute;
+  right:2.5%;
+
 }
 </style>

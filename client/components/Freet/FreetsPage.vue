@@ -2,6 +2,7 @@
 
 <template>
   <main>
+    <LeftBar />
     <section v-if="$store.state.username">
       <header>
         <h2>Welcome @{{ $store.state.username }}</h2>
@@ -62,10 +63,11 @@
 import FreetComponent from '@/components/Freet/FreetComponent.vue';
 import CreateFreetForm from '@/components/Freet/CreateFreetForm.vue';
 import GetFreetsForm from '@/components/Freet/GetFreetsForm.vue';
+import LeftBar from '@/components/common/LeftBar.vue';
 
 export default {
   name: 'FreetPage',
-  components: {FreetComponent, GetFreetsForm, CreateFreetForm},
+  components: {LeftBar, FreetComponent, GetFreetsForm, CreateFreetForm},
   mounted() {
     this.$refs.getFreetsForm.submit();
   }
@@ -73,6 +75,10 @@ export default {
 </script>
 
 <style scoped>
+main {
+  margin-left: 10%;
+}
+
 section {
   display: flex;
   flex-direction: column;

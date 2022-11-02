@@ -46,8 +46,7 @@ const router = express.Router();
     ],
     async (req: Request, res: Response) => {
       const userId = (req.session.userId as string) ?? '';
-      const type = req.body.type === "upvote";
-      const vote = await VoteCollection.vote(userId, req.params.freetId, type);
+      const vote = await VoteCollection.vote(userId, req.params.freetId, req.body.up);
       res.status(201).json({
         message: 'Your vote was saved successfully.',
         vote: vote

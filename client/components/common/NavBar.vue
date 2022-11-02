@@ -69,4 +69,5 @@ img {
 .alerts {
     width: 25%;
 }
+
 </style>

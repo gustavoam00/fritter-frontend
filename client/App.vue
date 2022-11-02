@@ -1,18 +1,14 @@
 <template>
   <div id="app">
-    <header>
-      <NavBar />
-    </header>
     <router-view />
   </div>
 </template>
 
 <script>
-import NavBar from '@/components/common/NavBar.vue';
 
 export default {
   name: 'App',
-  components: {NavBar},
+  components: {},
   beforeCreate() {
     // Sync stored username to current session
     fetch('/api/users/session', {

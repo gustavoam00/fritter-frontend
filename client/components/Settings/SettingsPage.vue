@@ -3,22 +3,13 @@
 
 <template>
   <main>
+    <LeftBar />
     <section>
       <header>
         <h2>Account settings for @{{ $store.state.username }}</h2>
       </header>
       <ChangeUsernameForm />
       <ChangePasswordForm />
-    </section>
-    <section>
-      <header>
-        <h2>Groups</h2>
-      </header>
-      <CreateGroupForm />
-      <DeleteGroupForm />
-      <ChangeGroupForm />
-      <AddMemberForm />
-      <DeleteMemberForm />
     </section>
     <section>
       <header>
@@ -42,14 +33,10 @@
 </template>
 
 <script>
+import LeftBar from '@/components/common/LeftBar.vue';
+
 import ChangeUsernameForm from '@/components/Settings/ChangeUsernameForm.vue';
 import ChangePasswordForm from '@/components/Settings/ChangePasswordForm.vue';
-
-import CreateGroupForm from '@/components/Settings/CreateGroupForm.vue';
-import DeleteGroupForm from '@/components/Settings/DeleteGroupForm.vue';
-import ChangeGroupForm from '@/components/Settings/ChangeGroupForm.vue';
-import AddMemberForm from '@/components/Settings/AddMemberForm.vue';
-import DeleteMemberForm from '@/components/Settings/DeleteMemberForm.vue';
 
 import SwitchToAnonForm from '@/components/Settings/SwitchToAnonForm.vue';
 import SwitchFromAnonForm from '@/components/Settings/SwitchFromAnonForm.vue';
@@ -60,13 +47,9 @@ import LogoutForm from '@/components/Settings/LogoutForm.vue';
 export default {
   name: 'SettingsPage',
   components: {
+    LeftBar,
     ChangeUsernameForm,
     ChangePasswordForm,
-    CreateGroupForm,
-    DeleteGroupForm,
-    ChangeGroupForm,
-    AddMemberForm,
-    DeleteMemberForm,
     SwitchToAnonForm,
     SwitchFromAnonForm,
     DeleteAccountForm,
@@ -74,3 +57,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+main {
+  margin-left: 10%;
+}
+</style>
