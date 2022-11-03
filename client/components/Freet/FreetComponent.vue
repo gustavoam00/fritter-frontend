@@ -1,4 +1,4 @@
-<!-- Reusable component representing a single freet and its actions -->
+<!-- Reusable component representing a single freet and its actfreet.authorions -->
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
@@ -27,19 +27,29 @@
       {{ freet.content }}
     </p>
     <div class = actions>
-      <button @click="upvote">
+
+      <button v-if="upvoted" @click="upvote" class = "liked">
         Like
       </button>
-      <button @click = "downvote">
+      <button v-else @click="upvote">
+        Like
+      </button>
+
+      <button v-if="downvoted" @click="downvote" class = "disliked">
         Dislike
       </button>
+      <button v-else @click="downvote">
+        Dislike
+      </button>
+
       <button @click = "react">
         React
       </button>
+
       <div
           v-if="$store.state.username === freet.author"
       >
-        <button
+        <button 
           v-if="editing"
           @click="submitEdit"
         >
@@ -51,7 +61,7 @@
         >
           🚫 Discard changes
         </button>
-        <button
+        <button 
           v-if="!editing"
           @click="startEditing"
         >
@@ -86,20 +96,46 @@ export default {
   },
   data() {
     return {
-      like: false,
+      upvoted: false,
+      downvoted: false,
+      voteId: undefined,
+      up: 0,
+      down: 0,
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
       alerts: {} // Displays success/error messages encountered during freet modification
     };
   },
-  mounted() {
-    this.like = this.liked() //?
+  async mounted() {
+    const options = {
+        method: 'GET', headers: {'Content-Type': 'application/json'}
+    };
+    const user = (await (await fetch('/api/users/', options)).json()).user;
 
+    const allVotes = await this.allVotes();
+    let upcount = 0;
+    let downcount = 0;
+
+    for (const vote of allVotes) {
+      if (vote.up){
+        if (vote.authorId === user._id){
+          this.upvoted = true;
+          this.voteId = vote._id;
+        }
+        upcount++;
+      } else {
+        if (vote.authorId === user._id){
+          this.downvoted = true;
+          this.voteId = vote._id;
+        }
+        downcount++;
+      }
+    }
+
+    this.up = upcount;
+    this.down = downcount;
   },
   methods: {
-    likes(){
-      
-    },
     startEditing() {
       /**
        * Enables edit mode on this freet.
@@ -150,32 +186,92 @@ export default {
       };
       this.request(params);
     },
-    upvote() {
-      //
-      const params = {
-        method: 'POST',
-        up: true,
-        message: 'Successfully liked freet!',
-        body: JSON.stringify({up: true}),
-        callback: () => {
-          this.$set(this.alerts, params.message, 'success');
-          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+    async upvote() {
+      let vote = true;
+      if (this.voteId){
+        const params = {
+          message: 'Successfully deleted vote!',
+          callback: () => {
+            this.$set(this.alerts, params.message, 'success');
+            setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          }
         }
-      };
-      this.requestVote(params);
+        await this.deleteVote(params);
+        if (this.upvoted) {
+          this.upcount--;
+          this.upvoted = false;
+          this.voteId = undefined;
+          vote = false;
+        } else if (this.downvoted) {
+          this.downcount--;
+          this.downvoted = false;
+        }
+      }
+      if (vote){
+        const params = {
+          method: 'POST',
+          refresh: true,
+          message: 'Successfully liked freet!',
+          body: JSON.stringify({up: true}),
+          callback: () => {
+            this.$set(this.alerts, params.message, 'success');
+            setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          }
+        };
+        const vote = (await this.requestVote(params)).vote;
+        this.voteId = vote._id;
+        this.upcount++;
+        this.upvoted = true;
+      }
     },
-    downvote() {
+    async downvote() {
+      let vote = true;
+      if (this.voteId){
+        const params = {
+          message: 'Successfully deleted vote!',
+          callback: () => {
+            this.$set(this.alerts, params.message, 'success');
+            setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          }
+        }
+        await this.deleteVote(params);
+        if (this.downvoted) {
+          this.downcount--;
+          this.downvoted = false;
+          this.voteId = undefined;
+          vote = false;
+        } else if (this.upvoted) {
+          this.upcount--;
+          this.upvoted = false;
+        }
+      }
+      if (vote){
+        const params = {
+          method: 'POST',
+          refresh: true,
+          message: 'Successfully disliked freet!',
+          body: JSON.stringify({up: false}),
+          callback: () => {
+            this.$set(this.alerts, params.message, 'success');
+            setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          }
+        };
+        const vote = (await this.requestVote(params)).vote;
+        this.voteId = vote._id;
+        this.downcount++;
+        this.downvoted = true;
+      }
+    },
+    allVotes(){
       const params = {
-        method: 'POST',
-        up: true,
-        message: 'Successfully disliked freet!',
-        body: JSON.stringify({up: false}),
+        method: 'GET',
+        message: '',
+        refresh: false,
         callback: () => {
-          this.$set(this.alerts, params.message, 'success');
           setTimeout(() => this.$delete(this.alerts, params.message), 3000);
         }
       };
-      this.requestVote(params);
+      return this.requestVote(params);
     },
     react() {
 
@@ -225,14 +321,42 @@ export default {
 
       try {
         const r = await fetch(`/api/votes/${this.freet._id}`, options);
+        const res = await r.json();
+
         if (!r.ok) {
-          const res = await r.json();
           throw new Error(res.error);
         }
-
-        this.$store.commit('refreshFreets');
-
+        if (params.refresh){
+          this.$store.commit('refreshFreets');
+        }
         params.callback();
+        return res;
+
+      } catch (e) {
+        this.$set(this.alerts, e, 'error');
+        setTimeout(() => this.$delete(this.alerts, e), 3000);
+      }
+    },
+    async deleteVote(params) {
+      /**
+       * Submits a request to the votes's endpoint
+       * @param params - Options for the request
+       * @param params.callback - Function to run if the the request succeeds
+       */
+      const options = {
+        method: 'DELETE', headers: {'Content-Type': 'application/json'}
+      };
+
+      try {
+        const r = await fetch(`/api/votes/${this.voteId}`, options);
+        const res = await r.json();
+
+        if (!r.ok) {
+          throw new Error(res.error);
+        }
+        this.$store.commit('refreshFreets');
+        params.callback();
+
       } catch (e) {
         this.$set(this.alerts, e, 'error');
         setTimeout(() => this.$delete(this.alerts, e), 3000);
@@ -261,5 +385,11 @@ header {
   position: absolute;
   right:2.5%;
 
+}
+.liked{
+  background-color: green;
+}
+.disliked{
+  background-color: red;
 }
 </style>
