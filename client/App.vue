@@ -36,6 +36,7 @@ body {
   padding: 0;
   margin: 0;
   font-size: 1.2em;
+  cursor: default;
 }
 
 main {

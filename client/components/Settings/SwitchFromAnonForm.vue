@@ -4,7 +4,7 @@
 import BlockForm from '@/components/common/BlockForm.vue';
 
 export default {
-  name: 'SwitchToAnonForm',
+  name: 'SwitchFromAnonForm',
   mixins: [BlockForm],
   data() {
     return {
@@ -13,7 +13,7 @@ export default {
       setUsername: true,
       title: 'Leave Anonymous Mode',
       fields: [],
-      content: '',
+      content: 'You can also switch from Anonymous Mode by clicking the profile picture on bottom left.',
       callback: () => {
         this.$router.push({name: 'Home'}); // Goes to Home page after switching to Anon
         this.$store.commit('alert', {

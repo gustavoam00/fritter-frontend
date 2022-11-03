@@ -18,10 +18,10 @@
         <div class="bottom">
             <p class = "handle">@{{ $store.state.username}}</p>
             <article v-if="$store.state.anon">
-                <img class = 'pic' src="../../public/incognito.png">
+                <img @click = "switchFromAnon" class = 'pic' src="../../public/incognito.png">
             </article>
             <article v-else>
-                <img class = 'pic' src="../../public/profile.png">
+                <img @click = "switchToAnon" class = 'pic' src="../../public/profile.png">
             </article>
             
         </div>
@@ -38,69 +38,64 @@
 </template>
 
 <script>
-/**
 export default {
-  name: 'FreetComponent',
-  props: {
-    // Data from the stored freet
-    freet: {
-      type: Object,
-      required: true
-    }
-  },
-  data() {
-    return {
-      editing: false, // Whether or not this freet is in edit mode
-      draft: this.freet.content, // Potentially-new content for this freet
-      alerts: {} // Displays success/error messages encountered during freet modification
-    };
-  },
-  methods: {
-    switchToAnon() {
-        const params = {
-        method: 'POST',
-        message: 'Successfully switched to Anonymous!',
-        callback: () => {
-          this.$set(this.alerts, params.message, 'success');
-          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
-        }
-      };
-      this.request(params);
-    },
-    switchFromAnon(){
-        const params = {
-        method: 'DELETE',
-        message: 'Successfully switchout out of Anonymous!',
-        callback: () => {
-          this.$set(this.alerts, params.message, 'success');
-          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
-        }
-      };
-      this.request(params);
-    },
-    async request(params) {
-        const options = {
-            method: params.method, headers: {'Content-Type': 'application/json'}
-        };
-        
-        try {
-            const r = await fetch('/api/anon/session', options);
-            if (!r.ok) {
-                const res = await r.json();
-                throw new Error(res.error);
+    name: 'LeftBar',
+    methods: {
+        switchToAnon() {
+            const params = {
+                method: 'POST',
+                message: 'Successfully switched to Anonymous!',
+                callback: () => {
+                    this.$set(this.alerts, params.message, 'success');
+                    setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+                }
+            };
+            this.submit(params);
+        },
+        switchFromAnon(){
+            const params = {
+                method: 'DELETE',
+                message: 'Successfully switchout out of Anonymous!',
+                callback: () => {
+                    this.$set(this.alerts, params.message, 'success');
+                    setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+                }
+            };
+            this.submit(params);
+        },
+        async submit(params) {
+            const options = {
+                method: params.method,
+                headers: {'Content-Type': 'application/json'},
+                credentials: 'same-origin' // Sends express-session credentials with request
+            };
+
+            try {
+                const r = await fetch('/api/anon/session', options);
+                if (!r.ok) {
+                    // If response is not okay, we throw an error and enter the catch block
+                    const res = await r.json();
+                    throw new Error(res.error);
+                }
+
+                const text = await r.text();
+                const res = text ? JSON.parse(text) : {user: null};
+                this.$store.commit('setUsername', res.user ? res.user.username : null);
+                this.$store.commit('changeAnon', res.user? res.user.anon: false);
+
+                this.$store.commit('refreshFreets');
+
+                if (this.callback) {
+                    this.callback();
+                }
+                
+            } catch (e) {
+                this.$set(this.alerts, e, 'error');
+                setTimeout(() => this.$delete(this.alerts, e), 3000);
             }
-
-            this.$store.commit('refreshFreets');
-
-            params.callback();
-        } catch (e) {
-            this.$set(this.alerts, e, 'error');
-            setTimeout(() => this.$delete(this.alerts, e), 3000);
         }
     }
-  }
-};
-*/
+}
 </script>
 
 <style scoped>
@@ -127,6 +122,7 @@ nav {
     margin: 0;
     width: 100%;
     font-size: 3vw;
+    cursor: default;
 }
 .paths{
     width: 100%;
@@ -151,10 +147,12 @@ nav {
     margin:0;
     padding: 0;
     font-size: 1.25vw;
+    cursor: default;
 }
 .pic {
     width: 80%;
     margin:10%;
+    cursor: pointer;
 }
 
 </style>

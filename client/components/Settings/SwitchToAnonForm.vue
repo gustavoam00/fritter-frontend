@@ -13,7 +13,7 @@ export default {
       setUsername: true,
       title: 'Enter Anonymous Mode',
       fields: [],
-      content: '',
+      content: 'You can also switch into Anonymous Mode by clicking the profile picture on bottom left.',
       callback: () => {
         this.$router.push({name: 'Home'}); // Goes to Home page after switching to Anon
         this.$store.commit('alert', {

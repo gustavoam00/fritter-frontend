@@ -86,12 +86,20 @@ export default {
   },
   data() {
     return {
+      like: false,
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
       alerts: {} // Displays success/error messages encountered during freet modification
     };
   },
+  mounted() {
+    this.like = this.liked() //?
+
+  },
   methods: {
+    likes(){
+      
+    },
     startEditing() {
       /**
        * Enables edit mode on this freet.
