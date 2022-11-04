@@ -46,6 +46,7 @@ export default {
                 method: 'POST',
                 message: 'Successfully switched to Anonymous!',
                 callback: () => {
+                    this.$router.push({name: 'Home'});
                     this.$set(this.alerts, params.message, 'success');
                     setTimeout(() => this.$delete(this.alerts, params.message), 3000);
                 }
@@ -57,6 +58,7 @@ export default {
                 method: 'DELETE',
                 message: 'Successfully switchout out of Anonymous!',
                 callback: () => {
+                    this.$router.push({name: 'Home'});
                     this.$set(this.alerts, params.message, 'success');
                     setTimeout(() => this.$delete(this.alerts, params.message), 3000);
                 }
@@ -84,11 +86,9 @@ export default {
                 this.$store.commit('changeAnon', res.user? res.user.anon: false);
 
                 this.$store.commit('refreshFreets');
+                location.reload();
+                params.callback();
 
-                if (this.callback) {
-                    this.callback();
-                }
-                
             } catch (e) {
                 this.$set(this.alerts, e, 'error');
                 setTimeout(() => this.$delete(this.alerts, e), 3000);

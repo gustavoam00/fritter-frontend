@@ -9,19 +9,6 @@
       </header>
       <CreateFreetForm />
     </section>
-    <section v-else>
-      <header>
-        <h2>Welcome to Fritter!</h2>
-      </header>
-      <article>
-        <h3>
-          <router-link to="/login">
-            Sign in
-          </router-link>
-          to create, edit, and delete freets.
-        </h3>
-      </article>
-    </section>
     <section>
       <header>
         <div class="left">

@@ -26,50 +26,51 @@
     >
       {{ freet.content }}
     </p>
-    <div class = actions>
+    <div class = "buttons">
+        <button v-if="upvoted" @click="upvote" class = "liked">
+          Like
+        </button>
+        <button v-else @click="upvote">
+          Like
+        </button>
 
-      <button v-if="upvoted" @click="upvote" class = "liked">
-        Like
-      </button>
-      <button v-else @click="upvote">
-        Like
-      </button>
+        <button v-if="downvoted" @click="downvote" class = "disliked">
+          Dislike
+        </button>
+        <button v-else @click="downvote">
+          Dislike
+        </button>
 
-      <button v-if="downvoted" @click="downvote" class = "disliked">
-        Dislike
-      </button>
-      <button v-else @click="downvote">
-        Dislike
-      </button>
+        <ReactionComponent 
+        :freet = "freet"
+        />
 
-      <button @click = "react">
-        React
-      </button>
-
-      <div
-          v-if="$store.state.username === freet.author"
-      >
-        <button 
-          v-if="editing"
-          @click="submitEdit"
+      <div class = "modify">
+        <div
+            v-if="$store.state.username === freet.author"
         >
-          ✅ Save changes
-        </button>
-        <button
-          v-if="editing"
-          @click="stopEditing"
-        >
-          🚫 Discard changes
-        </button>
-        <button 
-          v-if="!editing"
-          @click="startEditing"
-        >
-          ✏️ Edit
-        </button>
-        <button @click="deleteFreet">
-          🗑️ Delete
-        </button>
+          <button 
+            v-if="editing"
+            @click="submitEdit"
+          >
+            ✅ Save
+          </button>
+          <button
+            v-if="editing"
+            @click="stopEditing"
+          >
+            🚫 Discard
+          </button>
+          <button 
+            v-if="!editing"
+            @click="startEditing"
+          >
+            ✏️ Edit
+          </button>
+          <button @click="deleteFreet">
+            🗑️ Delete
+          </button>
+        </div>
       </div>
     </div>
     <section class="alerts">
@@ -85,8 +86,11 @@
 </template>
 
 <script>
+import ReactionComponent from '@/components/Freet/ReactionComponent.vue';
+
 export default {
   name: 'FreetComponent',
+  components: {ReactionComponent},
   props: {
     // Data from the stored freet
     freet: {
@@ -273,9 +277,6 @@ export default {
       };
       return this.requestVote(params);
     },
-    react() {
-
-    },
     async request(params) {
       /**
        * Submits a request to the freet's endpoint
@@ -368,7 +369,9 @@ export default {
 
 <style scoped>
 .freet {
-    border: 1px solid #111;
+    border: 2px solid #111;
+    border-radius: 20px;
+    margin: 0.5%;
     padding: 2.5%;
     position: relative;
 }
@@ -376,8 +379,15 @@ header {
   display: flex;
   flex-direction:row;
 }
-.actions {
+.buttons {
+  width:100%;
   display: flex;
+  justify-content: space-between;
+}
+.modify {
+  width: 75%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .info {

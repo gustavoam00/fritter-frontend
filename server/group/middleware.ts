@@ -69,7 +69,6 @@ const isGroupNameNotInUse = async (req: Request, res: Response, next: NextFuncti
  */
 const isMemberNotInGroup = async (req: Request, res: Response, next: NextFunction) => {
   const group = await GroupCollection.findGroupByName(req.session.userId, req.body.groupName);
-  console.log(group.members)
   if (!group.members.includes(req.body.username)){
     res.status(404).json({
       error: `User ${req.body.username} not in group.`
