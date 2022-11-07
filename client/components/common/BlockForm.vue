@@ -120,7 +120,7 @@ export default {
 
 <style scoped>
 form {
-  border: 2px solid #ca0fff;
+  border: 2px solid var(--primary-color);
   border-radius: 20px;
   padding: 0.5rem;
   display: flex;

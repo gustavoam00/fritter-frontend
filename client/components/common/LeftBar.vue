@@ -107,7 +107,7 @@ nav {
     width: 10%;
     /* max-width: 150px; */
     height: 100%;
-    background-color: #ca0fff;
+    background-color: var(--primary-color);
     display: flex;
     flex-direction: column;
     align-items: center;

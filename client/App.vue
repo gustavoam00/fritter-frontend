@@ -25,6 +25,11 @@ export default {
 </script>
 
 <style>
+:root {
+--primary-color: #a000e0;
+--white: #ffffff;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -43,20 +48,20 @@ main {
   padding: 0 5em 5em;
 }
 h3{
-  color:#ca0fff;
+  color: var(--primary-color);
 }
 button {
-  background-color: #ca0fff;
+  background-color: var(--primary-color);
   border:0;
   border-radius: 10px;
 }
 
 button:hover{
-  background-color: #b000e0;
+  filter: brightness(80%);
 }
 
 button:active{
-  background-color: #f0aaff;
+  filter: brightness(120%);
 }
 .alerts {
     position: absolute;
@@ -70,7 +75,7 @@ button:active{
 }
 
 .alerts article {
-    border-radius: 5px;
+    border-radius: 20px;
     padding: 10px 20px;
     color: #fff;
 }
@@ -80,10 +85,10 @@ button:active{
 }
 
 .alerts .error {
-    background-color: rgb(166, 23, 33);
+    background-color: rgba(166, 23, 33, 0.9);
 }
 
 .alerts .success {
-    background-color: rgb(45, 135, 87);
+    background-color: rgba(45, 135, 87, 0.9);
 }
 </style>

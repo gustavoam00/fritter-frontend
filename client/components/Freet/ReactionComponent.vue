@@ -2,18 +2,30 @@
     <div class="container">
         <div class="main">
         <!-- Reaction system start -->
-        <div class="reaction-container"><!-- container div for reaction system -->
-            <span class="reaction-btn"> <!-- Default like button -->
-                <span class="reaction-btn-emo like-btn-default"></span> <!-- Default like button emotion-->
+        <div class="reaction-btn"><!-- container div for reaction system -->
                 <img src="../../public/react.png" class="reaction-icon">
-                <ul class="emojies-box"> <!-- Reaction buttons container-->
-                    <li class="emoji emo-haha" data-reaction="HaHa" @click = "react('haha')"></li>
-                    <li class="emoji emo-wow" data-reaction="Wow" @click = "react('wow')"></li>
-                    <li class="emoji emo-sad" data-reaction="Sad" @click = "react('sad')"></li>
-                    <li class="emoji emo-angry" data-reaction="Angry" @click = "react('angry')"></li>
-                    <li class="emoji x" data-reaction="X" @click = "deleteReact"></li>
-                </ul>
-            </span>
+                <div class="emojies-box"> <!-- Reaction buttons container-->
+                    <div class="emoji-count">
+                      <div class="emoji emo-haha" @click = "react('haha')"></div>
+                      <div class="counter">{{haha_count}}</div>
+                    </div>
+                    <div class="emoji-count">
+                      <div class="emoji emo-wow" @click = "react('wow')"></div>
+                      <div class="counter">{{wow_count}}</div>
+                    </div>
+                    <div class="emoji-count">
+                      <div class="emoji emo-sad" @click = "react('sad')"></div>
+                      <div class="counter">{{sad_count}}</div>
+                    </div>
+                    <div class="emoji-count">
+                      <div class="emoji emo-angry" @click = "react('angry')"></div>
+                      <div class="counter">{{angry_count}}</div>
+                    </div>
+                    <div class="emoji-count">
+                      <div class="emoji x" @click = "deleteReact"></div>
+                      <div class="counter"> Delete</div>
+                    </div>
+                </div>
         </div>
         <!-- Reaction system end -->
         </div>
@@ -89,6 +101,15 @@ export default {
             this.reacted = true;
             this.type = emoji;
             this.id = res.reaction._id;
+            if (emoji == 'haha'){
+              this.haha_count++;
+            } else if (emoji === 'wow'){
+              this.wow_count++;
+            } else if (emoji === 'sad'){
+              this.sad_count++;
+            } else if (emoji === 'angry'){
+              this.angry_count++;
+            }
         }
     },
     async requestReact(params) {
@@ -131,6 +152,18 @@ export default {
           throw new Error(res.error);
         }
 
+        if (this.type == 'haha'){
+          this.haha_count--;
+        } else if (this.type === 'wow'){
+          this.wow_count--;
+        } else if (this.type === 'sad'){
+          this.sad_count--;
+        } else if (this.type === 'angry'){
+          this.angry_count--;
+        }
+        this.reacted =  false;
+        this.type = undefined;
+        this.id = undefined;
         this.$store.commit('alert', {
             message: 'Successfully deleted reaction!', status: 'success'
         });
@@ -154,14 +187,7 @@ export default {
 </script>
 
 <style scoped>
-.reaction-container{
-  max-width:100%;
-  position: relative;
-}
 
-.reaction-btn {
-  position: relative;
-}
 .reaction-icon {
   height: 40px;
   width: 40px;
@@ -170,21 +196,19 @@ export default {
 }
 
 .emojies-box {
-  width: 250px;
+  width: fit-content;
   height: 60px;
-  padding: 30%;
+  padding: 10px;
   position: absolute;
-  top: -102px;
-  left: 0;
+  top: -10px;
+  left: 40px;
   box-shadow: 1px 1px 2px #cccccc, -1px 0px 2px #eeeeee;
   border-radius: 20px;
   display: none;
 }
 
 .emoji {
-  list-style-type: none;
   cursor: pointer;
-  display: inline-block;
   height: 40px;
   width: 40px;
   margin-right: 2.5px;
@@ -193,12 +217,20 @@ export default {
   transform: scale(1, 1);
   transition: opacity .5s ease-in-out 1s, transform .07s ease-in-out 0s, top .07s ease-in-out 0s;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   background-position: center center
+}
+.reaction-btn {
+  position: relative;
 }
 
 .reaction-btn:hover .emojies-box {
-  display: block;
+  display: flex;
+  flex-direction: row;
+}
+.reaction-btn:hover .emoji {
+  opacity: 1;
+  animation-duration: .5s;
 }
 
 .emo-love {
@@ -225,67 +257,31 @@ export default {
   background-image: url('../../public/x_icon.png');
 }
 
-.reaction-btn:hover .emoji {
-  opacity: 1;
-  animation-duration: .5s;
-}
-
 .emoji:hover {
   transform: scale(1.2, 1.2);
 }
-
-.emoji::before {
-  display: inline-block;
-  color: #ffffff;
-  text-align: center;
-  line-height: 17px;
-  font-size: .5em;
-  width: 100%;
-  height: 45%;
-  background-color: #ca0fff;
-  border-radius: 20px;
-  position: absolute;
-  top: -25px;
-  opacity: 0;
-  transition: opacity .2s ease-in-out 0s;
-}
-
-.emoji:hover::before {
-  opacity: 1;
-}
-
-.emo-haha::before {
-  content: 'Haha';
-}
-
-.emo-wow::before {
-  content: 'Wow';
-}
-
-.emo-sad::before {
-  content: 'Sad';
-}
-
-.emo-angry::before {
-  content: 'Angry';
-}
-
-.x::before {
-  font-size: 0.18em;
-  content: 'Delete Reaction';
-}
-.count {
+.counter {
   display: inline-block;
   color: #ffffff;
   text-align: center;
   line-height: 17px;
   font-size: 0.7em;
-  width: 40px;
+  width: 45px;
   height: 1.2em;
-  background-color: #ca0fff;
-  position: relative;
+  position: absolute;
+  top: 50px;
+  background-color: var(--primary-color);
   border-radius: 20px;
-  opacity: 1;
+  margin-top: 10px;
+  opacity: 0;
   transition: opacity .2s ease-in-out 0s;
+}
+.emoji-count{
+  display:flex;
+  flex-direction: column;
+}
+
+.emoji-count:hover .counter{
+  opacity: 1;
 }
 </style>

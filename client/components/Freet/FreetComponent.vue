@@ -27,7 +27,7 @@
       {{ freet.content }}
     </p>
     <div class = "buttons">
-        <div class = "button-count">
+        <div class = "button-label">
           <div
             v-if="upvoted" 
             @click="upvote" 
@@ -43,7 +43,7 @@
           </div>
         </div>
         
-        <div class="button-count">
+        <div class="button-label">
           <div
             v-if="downvoted" 
             @click="downvote" 
@@ -67,28 +67,34 @@
       <div class = "modify">
         <div
             v-if="$store.state.username === freet.author"
-        >
+        > 
           <div 
-            v-if="editing" 
-            @click="submitEdit"
-            class = "icon save icon-label" 
-          ></div>
+            class="editing"
+            v-if="editing"
+          >
+            <div class = "button-label" @click="submitEdit">
+              <div class = "icon save"></div>
+              <div class = "label">Save</div>
+            </div>
+            <div class = "button-label" @click="stopEditing">
+              <div class = "icon discard"></div>
+              <div class = "label">Discard</div>
+            </div>
+          </div>
 
           <div
-            v-if="editing" 
-            @click="stopEditing"
-            class = "icon discard icon-label" 
-          ></div>
-          <div 
-            v-if="!editing" 
-            @click="startEditing" 
-            class = "icon edit icon-label"
-          ></div>
-          <div
-            v-if="!editing"
-            @click="deleteFreet"
-            class = "icon delete icon-label"
-          ></div>
+            class="not editing"
+            v-else
+          > 
+            <div class = "button-label" @click="startEditing">
+              <div class = "icon edit"></div>
+              <div class = "label">Edit</div>
+            </div>
+            <div class = "button-label" @click="deleteFreet">
+              <div class = "icon delete"></div>
+              <div class = "label">Delete</div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -222,19 +228,18 @@ export default {
         }
         await this.deleteVote(params);
         if (this.upvoted) {
-          this.upcount--;
+          this.up--;
           this.upvoted = false;
           this.voteId = undefined;
           vote = false;
         } else if (this.downvoted) {
-          this.downcount--;
+          this.down--;
           this.downvoted = false;
         }
       }
       if (vote){
         const params = {
           method: 'POST',
-          refresh: true,
           message: 'Successfully liked freet!',
           body: JSON.stringify({up: true}),
           callback: () => {
@@ -244,9 +249,10 @@ export default {
         };
         const vote = (await this.requestVote(params)).vote;
         this.voteId = vote._id;
-        this.upcount++;
+        this.up++;
         this.upvoted = true;
       }
+      this.$store.commit('refreshFreets');
     },
     async downvote() {
       let vote = true;
@@ -265,14 +271,13 @@ export default {
           this.voteId = undefined;
           vote = false;
         } else if (this.upvoted) {
-          this.upcount--;
+          this.up--;
           this.upvoted = false;
         }
       }
       if (vote){
         const params = {
           method: 'POST',
-          refresh: true,
           message: 'Successfully disliked freet!',
           body: JSON.stringify({up: false}),
           callback: () => {
@@ -282,15 +287,15 @@ export default {
         };
         const vote = (await this.requestVote(params)).vote;
         this.voteId = vote._id;
-        this.downcount++;
+        this.down++;
         this.downvoted = true;
       }
+      this.$store.commit('refreshFreets');
     },
     allVotes(){
       const params = {
         method: 'GET',
         message: '',
-        refresh: false,
         callback: () => {
           setTimeout(() => this.$delete(this.alerts, params.message), 3000);
         }
@@ -347,9 +352,6 @@ export default {
         if (!r.ok) {
           throw new Error(res.error);
         }
-        if (params.refresh){
-          this.$store.commit('refreshFreets');
-        }
         params.callback();
         return res;
 
@@ -375,7 +377,6 @@ export default {
         if (!r.ok) {
           throw new Error(res.error);
         }
-        this.$store.commit('refreshFreets');
         params.callback();
 
       } catch (e) {
@@ -389,7 +390,7 @@ export default {
 
 <style scoped>
 .freet {
-    border: 2px solid #ca0fff;
+    border: 2px solid var(--primary-color);
     border-radius: 20px;
     margin: 0.5%;
     padding: 2.5%;
@@ -400,7 +401,7 @@ header {
   flex-direction:row;
 }
 .author{
-  color: #ca0fff
+  color: var(--primary-color);
 }
 .buttons {
   width:100%;
@@ -418,7 +419,6 @@ header {
   position: absolute;
   right:2.5%;
 }
-
 .icon{
   height:40px;
   width:40px;
@@ -458,7 +458,7 @@ header {
   background-image:url("../../public/trash.png");
 }
 
-.button-count{
+.button-label{
   display:flex;
   flex-direction: column;
 }
@@ -468,44 +468,40 @@ header {
   color: #ffffff;
   text-align: center;
   line-height: 17px;
-  font-size: 0.7em;
+  font-size: 0.75em;
   width: 40px;
   height: 1.2em;
-  background-color: #ca0fff;
+  background-color: var(--primary-color);
   position: relative;
   border-radius: 20px;
   opacity: 1;
   transition: opacity .2s ease-in-out 0s;
 }
-.icon-label::before {
-  display: inline-block;
+.label{
   color: #ffffff;
   text-align: center;
   line-height: 17px;
-  font-size: 0.6em;
+  font-size: 0.7em;
   width: 40px;
   height: 1.2em;
-  background-color: #ca0fff;
-  position: absolute;
+  background-color: var(--primary-color);
+  position: relative;
+  top: 5px;
   border-radius: 20px;
   opacity: 0;
-  bottom: 9%;
   transition: opacity .2s ease-in-out 0s;
 }
 
-.icon-label:hover::before {
+.button-label:hover .label{
   opacity: 1;
 }
-.save::before {
-  content: 'Save';
+
+.icon:hover {
+  transform: scale(1.2, 1.2);
 }
-.discard::before {
-  content: 'Discard';
-}
-.delete::before {
-  content: 'Delete';
-}
-.edit::before {
-  content: 'Edit';
+
+.editing {
+  display:flex;
+  flex-direction: row;
 }
 </style>
