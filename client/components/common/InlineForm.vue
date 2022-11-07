@@ -48,10 +48,15 @@ export default {
 form {
     display: flex;
     position: relative;
+    height: 25px;
 }
 
 input {
-    padding: 0 5px;
+    padding: 0 10px;
     min-width: 200px;
+}
+
+button {
+  border-radius: 5px;
 }
 </style>

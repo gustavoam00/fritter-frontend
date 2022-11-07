@@ -107,7 +107,7 @@ nav {
     width: 10%;
     /* max-width: 150px; */
     height: 100%;
-    background-color: #ccc;
+    background-color: #ca0fff;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -147,6 +147,7 @@ nav {
     margin:0;
     padding: 0;
     font-size: 1.25vw;
+    font-weight: bold;
     cursor: default;
 }
 .pic {

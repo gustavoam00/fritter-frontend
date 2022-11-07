@@ -5,12 +5,13 @@
         <div class="reaction-container"><!-- container div for reaction system -->
             <span class="reaction-btn"> <!-- Default like button -->
                 <span class="reaction-btn-emo like-btn-default"></span> <!-- Default like button emotion-->
-                <button> React </button> <!-- Default like button text,(Like, wow, sad..) default:Like  -->
+                <img src="../../public/react.png" class="reaction-icon">
                 <ul class="emojies-box"> <!-- Reaction buttons container-->
                     <li class="emoji emo-haha" data-reaction="HaHa" @click = "react('haha')"></li>
                     <li class="emoji emo-wow" data-reaction="Wow" @click = "react('wow')"></li>
                     <li class="emoji emo-sad" data-reaction="Sad" @click = "react('sad')"></li>
                     <li class="emoji emo-angry" data-reaction="Angry" @click = "react('angry')"></li>
+                    <li class="emoji x" data-reaction="X" @click = "deleteReact"></li>
                 </ul>
             </span>
         </div>
@@ -35,6 +36,10 @@ export default {
         reacted: false,
         type: undefined,
         id: undefined,
+        haha_count: 0,
+        wow_count: 0,
+        sad_count: 0,
+        angry_count: 0,
     };
   },
   async mounted() {
@@ -51,6 +56,15 @@ export default {
             this.type = react.emoji;
             this.id = react._id;
         }
+        if (react.emoji == 'haha'){
+          this.haha_count++;
+        } else if (react.emoji == 'wow'){
+          this.wow_count++;
+        } else if (react.emoji == 'sad'){
+          this.sad_count++;
+        } else if (react.emoji == 'angry'){
+          this.angry_count++;
+        }
     }
   },
   methods: {
@@ -63,11 +77,11 @@ export default {
             body: JSON.stringify({
                emoji: emoji, 
             }),
+            message: 'Successfully reacted!',
             method: 'POST',
             callback: () => {
-                this.$store.commit('alert', {
-                    message: 'Successfully reacted!', status: 'success'
-                });
+              this.$set(this.alerts, params.message, 'success');
+              setTimeout(() => this.$delete(this.alerts, params.message), 3000);
             }
         };
         const res = await this.requestReact(params);
@@ -146,18 +160,21 @@ export default {
 }
 
 .reaction-btn {
-  font-weight: bold;
-  color: #7f7f7f;
   position: relative;
-  cursor: pointer;
+}
+.reaction-icon {
+  height: 40px;
+  width: 40px;
+  margin: 0;
+  padding: 0;
 }
 
 .emojies-box {
-  height: 300%;
-  width: 600%;
+  width: 250px;
+  height: 60px;
   padding: 30%;
   position: absolute;
-  top: -350%;
+  top: -102px;
   left: 0;
   box-shadow: 1px 1px 2px #cccccc, -1px 0px 2px #eeeeee;
   border-radius: 20px;
@@ -168,10 +185,10 @@ export default {
   list-style-type: none;
   cursor: pointer;
   display: inline-block;
-  width: 48px;
-  height: 48px;
-  position: absolute;
-  top: 10%;
+  height: 40px;
+  width: 40px;
+  margin-right: 2.5px;
+  margin-left: 2.5px;
   opacity: 0;
   transform: scale(1, 1);
   transition: opacity .5s ease-in-out 1s, transform .07s ease-in-out 0s, top .07s ease-in-out 0s;
@@ -185,84 +202,36 @@ export default {
 }
 
 .emo-love {
-  left: 3%;
-  transition-delay: 0s;
   background-image: url('../../public/reactions_love.png');
 }
 
 .emo-haha {
-  left: 19%;
-  transition-delay: 0s;
   background-image: url('../../public/reactions_haha.png');
 }
 
 .emo-wow {
-  left: 35%;
-  transition-delay: 0s;
   background-image: url('../../public/reactions_wow.png');
 }
 
 .emo-sad {
-  left: 51%;
-  transition-delay: 0s;
   background-image: url('../../public/reactions_sad.png');
 }
 
 .emo-angry {
-  left: 67%;
-  transition-delay: 0s;
   background-image: url('../../public/reactions_angry.png');
+}
+
+.x {
+  background-image: url('../../public/x_icon.png');
 }
 
 .reaction-btn:hover .emoji {
   opacity: 1;
-  /*animation-name: reaction_delay;*/
   animation-duration: .5s;
 }
 
-@keyframes reaction_delay {
-  0% {
-    width: 48px;
-    height: 48px;
-  }
-  50% {
-    width: 56px;
-    height: 56px;
-  }	
-  100% {
-    width: 48px;
-    height: 48px;
-  }
-}
-
-
-.reaction-btn:hover .emo-like {
-  animation-delay: 0s
-}
-
-.reaction-btn:hover .emo-love {
-  animation-delay: 0s
-}
-
-.reaction-btn:hover .emo-haha {
-  animation-delay: 0s
-}
-
-.reaction-btn:hover .emo-wow {
-  animation-delay: 0s
-}
-
-.reaction-btn:hover .emo-sad {
-  animation-delay: 0s
-}
-
-.reaction-btn:hover .emo-angry {
-  animation-delay: 0s
-}
-
 .emoji:hover {
-  transform: scale(1.3, 1.3);
-  top: 2px
+  transform: scale(1.2, 1.2);
 }
 
 .emoji::before {
@@ -270,11 +239,10 @@ export default {
   color: #ffffff;
   text-align: center;
   line-height: 17px;
-  font-size: .7em;
-  width: 80%;
-  height: 17px;
-  margin-left: 10%;
-  background-color: rgba(0, 0, 0, 0.6);
+  font-size: .5em;
+  width: 100%;
+  height: 45%;
+  background-color: #ca0fff;
   border-radius: 20px;
   position: absolute;
   top: -25px;
@@ -283,55 +251,41 @@ export default {
 }
 
 .emoji:hover::before {
-  opacity: 1
+  opacity: 1;
 }
 
 .emo-haha::before {
-  content: 'Haha'
+  content: 'Haha';
 }
 
 .emo-wow::before {
-  content: 'Wow'
+  content: 'Wow';
 }
 
 .emo-sad::before {
-  content: 'Sad'
+  content: 'Sad';
 }
 
 .emo-angry::before {
-  content: 'Angry'
+  content: 'Angry';
 }
 
-.like-stat {
-  margin-top: 10px;
+.x::before {
+  font-size: 0.18em;
+  content: 'Delete Reaction';
 }
-
-.like-btn-haha{
-  background-image: url('../../public/reaction-small.png');
-  background-repeat: no-repeat;
-  background-size: auto;
-  background-position: 0 -151px;
+.count {
+  display: inline-block;
+  color: #ffffff;
+  text-align: center;
+  line-height: 17px;
+  font-size: 0.7em;
+  width: 40px;
+  height: 1.2em;
+  background-color: #ca0fff;
+  position: relative;
+  border-radius: 20px;
+  opacity: 1;
+  transition: opacity .2s ease-in-out 0s;
 }
-
-.like-btn-wow{
-  background-image: url('../../public/reaction-small.png');
-  background-repeat: no-repeat;
-  background-size: auto;
-  background-position: -17px -185px;
-}
-
-.like-btn-sad{
-  background-image: url('../../public/reaction-small.png');
-  background-repeat: no-repeat;
-  background-size: auto;
-  background-position: -17px -168px;
-}
-
-.like-btn-angry{
-  background-image: url('../../public/reaction-small.png');
-  background-repeat: no-repeat;
-  background-size: auto;
-  background-position: -17px -117px;
-}
-
 </style>

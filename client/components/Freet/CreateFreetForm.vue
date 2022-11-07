@@ -13,7 +13,7 @@ export default {
       hasBody: true,
       fields: [
         {id: 'content', label: 'Content', value: ''},
-        {id: 'groupName', label: 'Group (optional)', value: ''}
+        {id: 'groupName', label: 'Group', value: '', placeholder: '(optional)'}
       ],
       title: 'Create a freet',
       refreshFreets: true,

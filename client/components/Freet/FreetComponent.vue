@@ -27,19 +27,38 @@
       {{ freet.content }}
     </p>
     <div class = "buttons">
-        <button v-if="upvoted" @click="upvote" class = "liked">
-          Like
-        </button>
-        <button v-else @click="upvote">
-          Like
-        </button>
+        <div class = "button-count">
+          <div
+            v-if="upvoted" 
+            @click="upvote" 
+            class = "icon filled-like icon-number"
+          ></div>
 
-        <button v-if="downvoted" @click="downvote" class = "disliked">
-          Dislike
-        </button>
-        <button v-else @click="downvote">
-          Dislike
-        </button>
+          <div
+            v-else @click="upvote" 
+            class = "icon like icon-number"
+          ></div>
+          <div class = "count">
+            {{up}}
+          </div>
+        </div>
+        
+        <div class="button-count">
+          <div
+            v-if="downvoted" 
+            @click="downvote" 
+            class = "icon filled-dislike icon-number"
+          ></div>
+
+          <div  
+            v-else @click="downvote" 
+            class = "icon dislike icon-number"
+          ></div>
+          <div class = "count">
+            {{down}}
+          </div>
+        </div>
+        
 
         <ReactionComponent 
         :freet = "freet"
@@ -49,27 +68,28 @@
         <div
             v-if="$store.state.username === freet.author"
         >
-          <button 
-            v-if="editing"
+          <div 
+            v-if="editing" 
             @click="submitEdit"
-          >
-            ✅ Save
-          </button>
-          <button
-            v-if="editing"
+            class = "icon save icon-label" 
+          ></div>
+
+          <div
+            v-if="editing" 
             @click="stopEditing"
-          >
-            🚫 Discard
-          </button>
-          <button 
+            class = "icon discard icon-label" 
+          ></div>
+          <div 
+            v-if="!editing" 
+            @click="startEditing" 
+            class = "icon edit icon-label"
+          ></div>
+          <div
             v-if="!editing"
-            @click="startEditing"
-          >
-            ✏️ Edit
-          </button>
-          <button @click="deleteFreet">
-            🗑️ Delete
-          </button>
+            @click="deleteFreet"
+            class = "icon delete icon-label"
+          ></div>
+
         </div>
       </div>
     </div>
@@ -369,7 +389,7 @@ export default {
 
 <style scoped>
 .freet {
-    border: 2px solid #111;
+    border: 2px solid #ca0fff;
     border-radius: 20px;
     margin: 0.5%;
     padding: 2.5%;
@@ -379,6 +399,9 @@ header {
   display: flex;
   flex-direction:row;
 }
+.author{
+  color: #ca0fff
+}
 .buttons {
   width:100%;
   display: flex;
@@ -387,19 +410,102 @@ header {
 .modify {
   width: 75%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row-reverse;
 }
 
 .info {
   font-size: 0.75em;
   position: absolute;
   right:2.5%;
+}
 
+.icon{
+  height:40px;
+  width:40px;
+  padding:0;
+  margin:0;
+  list-style-type: none;
+  cursor: pointer;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center
 }
-.liked{
-  background-color: green;
+
+.filled-like{
+  background-image: url("../../public/heart_filled.png");
 }
-.disliked{
-  background-color: red;
+
+.like{
+  background-image: url("../../public/heart.png");
+}
+.filled-dislike{
+  background-image:url("../../public/broken_heart_filled.png");
+}
+.dislike{
+  background-image:url("../../public/broken_heart.png");
+}
+.save{
+  background-image:url("../../public/save.webp");
+}
+.discard{
+  background-image:url("../../public/x_icon_black.png");
+}
+.edit{
+  background-image: url("../../public/pencil.png");
+}
+.delete{
+  background-image:url("../../public/trash.png");
+}
+
+.button-count{
+  display:flex;
+  flex-direction: column;
+}
+
+.count {
+  display: inline-block;
+  color: #ffffff;
+  text-align: center;
+  line-height: 17px;
+  font-size: 0.7em;
+  width: 40px;
+  height: 1.2em;
+  background-color: #ca0fff;
+  position: relative;
+  border-radius: 20px;
+  opacity: 1;
+  transition: opacity .2s ease-in-out 0s;
+}
+.icon-label::before {
+  display: inline-block;
+  color: #ffffff;
+  text-align: center;
+  line-height: 17px;
+  font-size: 0.6em;
+  width: 40px;
+  height: 1.2em;
+  background-color: #ca0fff;
+  position: absolute;
+  border-radius: 20px;
+  opacity: 0;
+  bottom: 9%;
+  transition: opacity .2s ease-in-out 0s;
+}
+
+.icon-label:hover::before {
+  opacity: 1;
+}
+.save::before {
+  content: 'Save';
+}
+.discard::before {
+  content: 'Discard';
+}
+.delete::before {
+  content: 'Delete';
+}
+.edit::before {
+  content: 'Edit';
 }
 </style>

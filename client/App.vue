@@ -42,7 +42,22 @@ body {
 main {
   padding: 0 5em 5em;
 }
+h3{
+  color:#ca0fff;
+}
+button {
+  background-color: #ca0fff;
+  border:0;
+  border-radius: 10px;
+}
 
+button:hover{
+  background-color: #b000e0;
+}
+
+button:active{
+  background-color: #f0aaff;
+}
 .alerts {
     position: absolute;
     z-index: 99;

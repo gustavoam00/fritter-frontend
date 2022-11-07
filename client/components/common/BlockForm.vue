@@ -23,6 +23,7 @@
           :type="field.id === 'password' ? 'password' : 'text'"
           :name="field.id"
           :value="field.value"
+          :placeholder = "field.placeholder"
           @input="field.value = $event.target.value"
         >
       </div>
@@ -31,6 +32,7 @@
       <p>{{ content }}</p>
     </article>
     <button
+      class="submit"
       type="submit"
     >
       {{ title }}
@@ -118,7 +120,7 @@ export default {
 
 <style scoped>
 form {
-  border: 2px solid #111;
+  border: 2px solid #ca0fff;
   border-radius: 20px;
   padding: 0.5rem;
   display: flex;
