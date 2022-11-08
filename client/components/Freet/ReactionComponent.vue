@@ -3,7 +3,32 @@
         <div class="main">
         <!-- Reaction system start -->
         <div class="reaction-btn"><!-- container div for reaction system -->
-                <img src="../../public/react.png" class="reaction-icon">
+                <img 
+                v-if="!reacted"
+                src="../../public/react.png" 
+                class="reaction-icon"
+                >
+                <img 
+                v-else-if="type == 'haha'"
+                src="../../public/reactions_haha.png" 
+                class="reaction-icon"
+                >
+                <img 
+                v-else-if="type == 'wow'"
+                src="../../public/reactions_wow.png" 
+                class="reaction-icon"
+                >
+                <img 
+                v-else-if="type == 'sad'"
+                src="../../public/reactions_sad.png" 
+                class="reaction-icon"
+                >
+                <img 
+                v-else-if="type == 'angry'"
+                src="../../public/reactions_angry.png" 
+                class="reaction-icon"
+                >
+                
                 <div class="emojies-box"> <!-- Reaction buttons container-->
                     <div class="emoji-count">
                       <div class="emoji emo-haha" @click = "react('haha')"></div>
@@ -231,10 +256,6 @@ export default {
 .reaction-btn:hover .emoji {
   opacity: 1;
   animation-duration: .5s;
-}
-
-.emo-love {
-  background-image: url('../../public/reactions_love.png');
 }
 
 .emo-haha {

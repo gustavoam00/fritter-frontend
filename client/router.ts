@@ -28,7 +28,7 @@ router.beforeEach((to, from, next) => {
       return;
     }
 
-    if ((to.name == 'Settings' || to.name == 'Not Found' || to.name == 'Home') && !router.app.$store.state.username) {
+    if ((to.name == 'Settings' || to.name == 'Not Found' || to.name == 'Home' ||to.name == 'Group') && !router.app.$store.state.username) {
       next({name: 'Login'}); // Go to Login page if user navigates to Settings and are not signed in
       return;
     }

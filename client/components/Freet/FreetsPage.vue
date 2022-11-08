@@ -3,7 +3,7 @@
 <template>
   <main>
     <LeftBar />
-    <section v-if="$store.state.username">
+    <section>
       <header>
         <h2>Welcome @{{ $store.state.username }}</h2>
       </header>
@@ -54,7 +54,12 @@ import LeftBar from '@/components/common/LeftBar.vue';
 
 export default {
   name: 'FreetPage',
-  components: {LeftBar, FreetComponent, GetFreetsForm, CreateFreetForm},
+  components: {
+    LeftBar, 
+    FreetComponent, 
+    GetFreetsForm, 
+    CreateFreetForm
+  },
   mounted() {
     this.$refs.getFreetsForm.submit();
   }

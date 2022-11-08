@@ -21,7 +21,7 @@
                 <img @click = "switchFromAnon" class = 'pic' src="../../public/incognito.png">
             </article>
             <article v-else>
-                <img @click = "switchToAnon" class = 'pic' src="../../public/profile.png">
+                <img @click = "switchToAnon" class = 'pic' src="../../public/profile2.png">
             </article>
             
         </div>

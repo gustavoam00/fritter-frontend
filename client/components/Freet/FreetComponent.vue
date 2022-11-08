@@ -83,7 +83,7 @@
           </div>
 
           <div
-            class="not editing"
+            class="editing"
             v-else
           > 
             <div class = "button-label" @click="startEditing">
@@ -220,9 +220,7 @@ export default {
       let vote = true;
       if (this.voteId){
         const params = {
-          message: 'Successfully deleted vote!',
           callback: () => {
-            this.$set(this.alerts, params.message, 'success');
             setTimeout(() => this.$delete(this.alerts, params.message), 3000);
           }
         }
@@ -240,10 +238,8 @@ export default {
       if (vote){
         const params = {
           method: 'POST',
-          message: 'Successfully liked freet!',
           body: JSON.stringify({up: true}),
           callback: () => {
-            this.$set(this.alerts, params.message, 'success');
             setTimeout(() => this.$delete(this.alerts, params.message), 3000);
           }
         };
@@ -258,15 +254,13 @@ export default {
       let vote = true;
       if (this.voteId){
         const params = {
-          message: 'Successfully deleted vote!',
           callback: () => {
-            this.$set(this.alerts, params.message, 'success');
             setTimeout(() => this.$delete(this.alerts, params.message), 3000);
           }
         }
         await this.deleteVote(params);
         if (this.downvoted) {
-          this.downcount--;
+          this.down--;
           this.downvoted = false;
           this.voteId = undefined;
           vote = false;
@@ -278,10 +272,8 @@ export default {
       if (vote){
         const params = {
           method: 'POST',
-          message: 'Successfully disliked freet!',
           body: JSON.stringify({up: false}),
           callback: () => {
-            this.$set(this.alerts, params.message, 'success');
             setTimeout(() => this.$delete(this.alerts, params.message), 3000);
           }
         };
@@ -326,7 +318,6 @@ export default {
         this.editing = false;
         this.$store.commit('refreshFreets');
 
-        params.callback();
       } catch (e) {
         this.$set(this.alerts, e, 'error');
         setTimeout(() => this.$delete(this.alerts, e), 3000);
@@ -352,7 +343,6 @@ export default {
         if (!r.ok) {
           throw new Error(res.error);
         }
-        params.callback();
         return res;
 
       } catch (e) {
@@ -377,7 +367,6 @@ export default {
         if (!r.ok) {
           throw new Error(res.error);
         }
-        params.callback();
 
       } catch (e) {
         this.$set(this.alerts, e, 'error');

@@ -106,6 +106,10 @@ export default {
           this.$store.commit('refreshFreets');
         }
 
+        if (this.refreshGroup) {
+          this.$store.commit('refreshGroups');
+        }
+
         if (this.callback) {
           this.callback();
         }
