@@ -163,6 +163,9 @@ export default {
       }
     },
     async deleteReact(){
+        if (!this.reacted){
+          return
+        }
         const options = {
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'},

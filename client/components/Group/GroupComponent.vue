@@ -23,11 +23,9 @@
                     v-model="input"
                     :placeholder = "placeholder"
                 >
-                <div class = "button-label">
-                    <button @click="call" type = "submit" class = "button">
-                        {{this.editType}}
-                    </button>
-                </div>
+                <button @click="call" type = "submit" class = "button">
+                    {{this.editType}}
+                </button>
                     
             </div>
             <div v-else>
@@ -260,7 +258,8 @@ p{
 }
 .button{
     font-size: 0.75em;
-    height:100%
+    height:100%;
+    width: 100%;
 }
 .label{
   color: #ffffff;
