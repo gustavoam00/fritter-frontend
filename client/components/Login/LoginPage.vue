@@ -3,6 +3,13 @@
 
 <template>
   <main>
+    <header>
+      <h1>
+        <img src = "logo.png" class = "logo">
+        Welcome to Fritter 
+      </h1>
+      <h3>Please sign in or create an account to proceed</h3>
+    </header>
     <section>
       <header>
         <h2>New to Fritter?</h2>
@@ -30,3 +37,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.logo{
+  height: 0.8em;
+}
+</style>

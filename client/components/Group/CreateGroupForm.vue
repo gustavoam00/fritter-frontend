@@ -33,7 +33,7 @@ form {
   justify-content: space-between;
   margin-bottom: 14px;
   position: relative;
-  width: 47.5%;
+  width: 100%;
   padding: 2.5%;
   margin-bottom: 5%;
 }

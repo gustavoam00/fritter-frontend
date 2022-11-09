@@ -1,52 +1,69 @@
 <template>
     <article class="group">
-      <header>
-        <h3 class="name">
-          {{ group.name }}
-        </h3>
-      </header>
-      <article 
-        class = "members"
-        v-if="group.members.length !== 0"
-      >
-        <div
-            v-for="member in group.members"
+        <header>
+            <h3 class="name">
+            {{ group.name }}
+            </h3>
+        </header>
+        <article 
+            class = "members"
+            v-if="group.members.length !== 0"
         >
-            <p>{{member}}</p>
+            <div v-for="member in group.members">
+                <p>@{{member}}</p>
+            </div>
+        </article>
+        <article class = members v-else>
+            <p>No Members</p>
+        </article>
+        <div class = "bottom">
+            <div v-if="editing">
+                <input
+                    type="text"
+                    v-model="input"
+                    :placeholder = "placeholder"
+                >
+                <div class = "button-label">
+                    <button @click="call" type = "submit" class = "button">
+                        {{this.editType}}
+                    </button>
+                </div>
+                    
+            </div>
+            <div v-else>
+                <div class = "buttons">
+                    <div class = "button-label">
+                        <button @click="startAdd" class = "button">
+                            Add Member
+                        </button>
+                    </div>
+                    <div class = "button-label">
+                        <button @click="startRemove" class = "button">
+                            Remove Member
+                        </button>
+                    </div>
+                    <div class = "button-label">
+                        <button @click="startChange" class = "button">
+                            Change Name
+                        </button>
+                    </div>
+                    <div class = "button-label">
+                        <button @click="deleteGroup" class = "button">
+                            Delete Group
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </article>
-    <article class = members v-else>
-        <p>No Members</p>
-    </article>
-    <div class = "bottom">
-        <input
-            type="text"
-            v-model="input"
-            :placeholder = "placeholder"
-        >
-        <div class = "buttons">
-            <div class = "button-label">
-                <button @click="addMember">
-                    Add Member
-                </button>
-            </div>
-            <div class = "button-label">
-                <button @click="removeMember">
-                    Remove Member
-                </button>
-            </div>
-            <div class = "button-label">
-                <button @click="changeGroup">
-                    Change Name
-                </button>
-            </div>
-            <div class = "button-label">
-                <button @click="deleteGroup">
-                    Delete
-                </button>
-            </div>
-        </div>
-    </div>
+        <section class="alerts">
+            <article
+                v-for="(status, alert, index) in alerts"
+                :key="index"
+                :class="status"
+            >
+                <p>{{ alert }}</p>
+            </article>
+        </section>
     </article>
 </template>  
 
@@ -62,11 +79,34 @@ export default {
     data() {
         return {
             input:"",
+            editing: false,
+            editType: "",
             placeholder: "",
             alerts: {},
         };
     }, 
     methods:{
+        startChange(){
+            this.editing = true;
+            this.editType = 'Change Name';
+            this.placeholder = "(new name)";
+        },
+        startAdd(){
+            this.editing = true;
+            this.editType = 'Add Member';
+            this.placeholder = "(username)";
+        },
+        startRemove(){
+            this.editing = true;
+            this.editType = 'Remove Member';
+            this.placeholder = "(username)";
+        },
+        call(){
+            if (this.editType == 'Change Name') this.changeName();
+            else if (this.editType == 'Add Member') this.addMember();
+            else if (this.editType == 'Remove Member') this.removeMember();
+            this.editType = '';
+        },
         deleteGroup(){
             const params = {
                 method: 'DELETE',
@@ -77,10 +117,9 @@ export default {
                 });
                 }
             };
-        this.request(params);
+            this.request(params);
         },
-        changeGroup(){
-            this.placeholder = "(new name)";
+        changeName(){
             const params = {
                 method: 'PUT',
                 body: JSON.stringify({groupName: this.group.name, newName: this.input}),
@@ -93,10 +132,13 @@ export default {
             this.request(params);
         },
         addMember(){
-            this.placeholder = "(username)";
+            let username = this.input;
+            if (username.substring(0,1) === '@'){
+                username = username.substring(1)
+            }
             const params = {
                 method: 'POST',
-                body: JSON.stringify({groupName: this.group.name, username: this.input}),
+                body: JSON.stringify({groupName: this.group.name, username: username}),
                 callback: () => {
                     this.$store.commit('alert', {
                         message: 'Successfully added member!', status: 'success'
@@ -106,7 +148,10 @@ export default {
             this.requestMember(params);
         },
         removeMember(){
-            this.placeholder = "(username)";
+            let username = this.input;
+            if (username.substring(0,1) === '@'){
+                username = username.substring(1)
+            }
             const params = {
                 method: 'DELETE',
                 body: JSON.stringify({groupName: this.group.name, username: this.input}),
@@ -131,6 +176,7 @@ export default {
                 const r = await fetch('/api/groups/', options);
                 this.input = '';
                 this.placeholder = '';
+                this.editing = false;
                 if (!r.ok) {
                 const res = await r.json();
                 throw new Error(res.error);
@@ -156,6 +202,7 @@ export default {
                 const r = await fetch('/api/groups/members', options);
                 this.input = '';
                 this.placeholder = '';
+                this.editing = false;
 
                 if (!r.ok) {
                 const res = await r.json();
@@ -185,6 +232,9 @@ input {
     padding: 2.5%;
     margin-bottom: 5%;
     position:relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .name{
     margin:0;
@@ -199,6 +249,7 @@ p{
    margin-bottom: 2.5%; 
 }
 .button-label{
+    width:24%;
     display:flex;
     flex-direction: column;
 }
@@ -207,4 +258,26 @@ p{
     display: flex;
     justify-content: space-between;
 }
+.button{
+    font-size: 0.75em;
+    height:100%
+}
+.label{
+  color: #ffffff;
+  text-align: center;
+  line-height: 17px;
+  font-size: 0.7em;
+  width: fit-content + 1em;
+  height: 1.2em;
+  background-color: var(--primary-color);
+  position: relative;
+  top: 5px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity .2s ease-in-out 0s;
+}
+.button-label:hover .label{
+  opacity: 1;
+}
+
 </style>

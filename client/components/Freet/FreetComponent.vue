@@ -471,7 +471,7 @@ header {
   text-align: center;
   line-height: 17px;
   font-size: 0.7em;
-  width: 40px;
+  width: fit-content + 1em;
   height: 1.2em;
   background-color: var(--primary-color);
   position: relative;

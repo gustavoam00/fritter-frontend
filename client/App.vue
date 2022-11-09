@@ -27,11 +27,11 @@ export default {
 <style>
 :root {
 --primary-color: #a000e0;
---white: #ffffff;
 }
 
 * {
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 body {
@@ -47,13 +47,17 @@ body {
 main {
   padding: 0 5em 5em;
 }
+
 h3{
   color: var(--primary-color);
 }
+
 button {
   background-color: var(--primary-color);
   border:0;
   border-radius: 10px;
+  padding: 5px;
+  color: white;
 }
 
 button:hover{
